@@ -1,0 +1,75 @@
+---
+broker:
+  admin_url: http://localhost:8161
+  host: localhost
+  port: 5672
+  username: admin
+  password: admin
+  broker_id: 0.0.0.0
+
+broker_api: '{{ broker.admin_url }}/console/jolokia'
+
+defaults:
+  broker_id: broker
+  queues:
+    durable: yes
+    routing_type: 'ANYCAST'
+  topics:
+    durable: no
+    routing_type: 'MULTICAST'
+  diverts:
+    exclusive: no
+    transformer_class_name: null
+
+topics:
+  - name: events
+
+queues:
+  - name: pdr.discovered
+  - name: submission.created
+  - name: pdr.validated
+  - name: submission.started
+  - name: submission.granule.translated
+  - name: submission.granule.validated
+  - name: submission.granule.stored
+  - name: submission.granule.completed
+  - name: submission.completed
+
+diverts:
+  - name: divert-events-pdr.discovered
+    address: events
+    forwarding_address: pdr.discovered
+    filter_string: subject='pdr.discovered'
+  - name: divert-events-submission.created
+    address: events
+    forwarding_address: submission.created
+    filter_string: subject='submission.created'
+  - name: divert-events-pdr.validated
+    address: events
+    forwarding_address: pdr.validated
+    filter_string: subject='pdr.validated'
+  - name: divert-events-submission.started
+    address: events
+    forwarding_address: submission.started
+    filter_string: subject='submission.started'
+  - name: divert-events-submission.granule.translated
+    address: events
+    forwarding_address: submission.granule.translated
+    filter_string: subject='submission.granule.translated'
+  - name: divert-events-submission.granule.validated
+    address: events
+    forwarding_address: submission.granule.validated
+    filter_string: subject='submission.granule.validated'
+  - name: divert-events-submission.granule.stored
+    address: events
+    forwarding_address: submission.granule.stored
+    filter_string: subject='submission.granule.stored'
+  - name: divert-events-submission.granule.completed
+    address: events
+    forwarding_address: submission.granule.completed
+    filter_string: subject='submission.granule.completed'
+  - name: divert-events-submission.completed
+    address: events
+    forwarding_address: submission.completed
+    filter_string: subject='submission.completed'
+

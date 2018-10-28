@@ -1,0 +1,24 @@
+---
+# file: create-queue.yml
+- name: assert queue name
+  assert:
+    that:
+      - queue is defined
+
+- name: create queue named '{{ queue.name }}'
+  uri:
+    url: '{{ broker_api }}/'
+    method: POST
+    force_basic_auth: true
+    user: '{{ broker.username }}'
+    password: '{{ broker.password }}'
+    body_format: json
+    body:
+      type: exec
+      mbean: org.apache.activemq.artemis:broker="{{ broker.broker_id }}"
+      operation: createQueue(java.lang.String,java.lang.String,boolean,java.lang.String)
+      arguments:
+        - '{{ queue.address | default(queue.name) }}'
+        - '{{ queue.name }}'
+        - '{{ queue.durable | default(defaults.queues.durable) }}'
+        - '{{ queue.routing_type | default(defaults.queues.routing_type) }}'

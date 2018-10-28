@@ -1,0 +1,24 @@
+---
+# file: create-topic.yml
+- name: assert topic name
+  assert:
+    that:
+      - topic is defined
+
+- name: create topic named '{{ topic.name }}'
+  uri:
+    url: '{{ broker_api }}/'
+    method: POST
+    force_basic_auth: true
+    user: '{{ broker.username }}'
+    password: '{{ broker.password }}'
+    body_format: json
+    body:
+      type: exec
+      mbean: org.apache.activemq.artemis:broker="{{ broker.broker_id }}"
+      operation: createQueue(java.lang.String,java.lang.String,boolean,java.lang.String)
+      arguments:
+        - '{{ topic.address | default(topic.name) }}'
+        - '{{ topic.name }}'
+        - '{{ topic.durable | default(defaults.topics.durable) }}'
+        - '{{ topic.routing_type | default(defaults.topics.routing_type) }}'

@@ -1,0 +1,6 @@
+---
+# file: site.yml
+- hosts: local
+  tasks:
+    - import_role:
+        name: events

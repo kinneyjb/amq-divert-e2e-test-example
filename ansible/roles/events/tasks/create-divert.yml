@@ -1,0 +1,27 @@
+---
+# file: create-divert.yml
+- name: assert divert name
+  assert:
+    that:
+      - divert is defined
+
+- name: create divert named '{{ divert.name }}'
+  uri:
+    url: '{{ broker_api }}/'
+    method: POST
+    force_basic_auth: true
+    user: '{{ broker.username }}'
+    password: '{{ broker.password }}'
+    body_format: json
+    body:
+      type: exec
+      mbean: org.apache.activemq.artemis:broker="{{ broker.broker_id | default(defaults.broker_id) }}"
+      operation: createDivert(java.lang.String,java.lang.String,java.lang.String,java.lang.String,boolean,java.lang.String,java.lang.String)
+      arguments:
+        - "{{ divert.name }}"
+        - "{{ divert.routing_name | default(divert.name) }}"
+        - "{{ divert.address }}"
+        - "{{ divert.forwarding_address }}"
+        - "{{ divert.exclusive | default(defaults.diverts.exclusive) }}"
+        - "{{ divert.filter_string }}"
+        - null

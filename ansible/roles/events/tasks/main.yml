@@ -1,0 +1,30 @@
+---
+
+- name: assert that broker info exists
+  assert:
+    that:
+      - broker.admin_url is defined
+      - broker.username is defined
+      - broker.password is defined
+      - defaults is defined
+      - topics is defined
+      - queues is defined
+      - diverts is defined
+
+- name: create topics
+  include_tasks: create-topic.yml
+  loop: '{{ topics }}'
+  loop_control:
+    loop_var: topic
+
+- name: create queues
+  include_tasks: create-queue.yml
+  loop: '{{ queues }}'
+  loop_control:
+    loop_var: queue
+
+- name: create diverts
+  include_tasks: create-divert.yml
+  loop: '{{ diverts }}'
+  loop_control:
+    loop_var: divert
